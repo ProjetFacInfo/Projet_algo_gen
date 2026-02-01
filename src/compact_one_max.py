@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # PARAMÈTRES
 # =============================================================================
 ONE_MAX_LENGTH = 1000
-VIRTUAL_POP_SIZE = ONE_MAX_LENGTH // 2
+VIRTUAL_POP_SIZE = ONE_MAX_LENGTH // 10
 MAX_GENERATIONS = 20000
 STEP = 1.0 / VIRTUAL_POP_SIZE
 NB_RUNS = 20

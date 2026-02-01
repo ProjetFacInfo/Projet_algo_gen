@@ -54,7 +54,6 @@ def maj_distribution_vectorisee(population, k):
 def run_single_eda(run_id):
     """ Exécute 1 run et renvoie DEUX listes : historique Max et historique Avg. """
     np.random.seed(run_id)
-    random.seed(run_id)
 
     distribution = np.ones(ONE_MAX_LENGTH) * 0.5
 
