@@ -17,7 +17,7 @@ MIN_PROBA = 1.0 / ONE_MAX_LENGTH
 MAX_PROBA = 1.0 - MIN_PROBA
 
 # =============================================================================
-# 2. SETUP DEAP
+# SETUP DEAP
 # =============================================================================
 if "FitnessMax" in dir(creator): del creator.FitnessMax
 if "Individual" in dir(creator): del creator.Individual
