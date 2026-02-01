@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # =============================================================================
-# 1. PARAMÈTRES
+# PARAMÈTRES
 # =============================================================================
 ONE_MAX_LENGTH = 1000
 VIRTUAL_POP_SIZE = ONE_MAX_LENGTH // 2
@@ -11,7 +11,7 @@ STEP = 1.0 / VIRTUAL_POP_SIZE
 NB_RUNS = 20
 
 # =============================================================================
-# 2. MOTEUR CGA VECTORISÉ
+# MOTEUR CGA VECTORISÉ
 # =============================================================================
 
 def run_cga_numpy(run_id, n_bits, virtual_pop_n, max_iters):
@@ -22,24 +22,18 @@ def run_cga_numpy(run_id, n_bits, virtual_pop_n, max_iters):
     """
     np.random.seed(run_id)
 
-    # 1. Initialisation du vecteur de probabilité à 0.5 (Incertitude totale) [cite: 273]
+    # Initialisation du vecteur de probabilité à 0.5
     probability_vector = np.ones(n_bits) * 0.5
 
-    # Historique pour le graphe
-    # On stockera la "qualité" du vecteur (somme des probas) ou la fitness du winner
     fitness_history = np.zeros(max_iters)
 
     for it in range(max_iters):
-        # 2. Génération de deux candidats (Winner / Loser potentiels) [cite: 274]
-        # On génère un masque aléatoire et on compare au vecteur de proba
         candidate_a = (np.random.rand(n_bits) < probability_vector).astype(int)
         candidate_b = (np.random.rand(n_bits) < probability_vector).astype(int)
 
-        # 3. Évaluation (OneMax = Somme des bits) [cite: 278]
         fit_a = np.sum(candidate_a)
         fit_b = np.sum(candidate_b)
 
-        # 4. Compétition (Winner vs Loser) [cite: 278]
         if fit_a >= fit_b:
             winner, loser = candidate_a, candidate_b
             current_best = fit_a
@@ -49,9 +43,7 @@ def run_cga_numpy(run_id, n_bits, virtual_pop_n, max_iters):
 
         fitness_history[it] = current_best
 
-        # 5. Mise à jour du vecteur (Vectorisée) [cite: 279]
-        # On ne touche que les bits où winner et loser sont différents
-        if fit_a != fit_b:  # Petite opti : si fitness égales, pas d'info utile (souvent)
+        if fit_a != fit_b:
 
             # Masque des différences (XOR)
             diff_mask = (winner != loser)
@@ -70,14 +62,14 @@ def run_cga_numpy(run_id, n_bits, virtual_pop_n, max_iters):
             # On peut laisser converger à 0.0 et 1.0 (convergence finale)
             probability_vector = np.clip(probability_vector, 0.0, 1.0)
 
-            # Condition d'arrêt anticipée (si le vecteur a convergé partout) [cite: 284]
+            # Condition d'arrêt anticipée (si le vecteur a convergé partout)
             # (Optionnel, ici on laisse tourner pour voir la courbe plate)
 
     return fitness_history, probability_vector
 
 
 # =============================================================================
-# 3. BOUCLE PRINCIPALE (MULTI-RUNS)
+# BOUCLE PRINCIPALE (MULTI-RUNS)
 # =============================================================================
 
 def main_cga():
@@ -102,7 +94,7 @@ def main_cga():
 
 
 # =============================================================================
-# 4. VISUALISATION
+# VISUALISATION
 # =============================================================================
 if __name__ == "__main__":
     mean_data, std_data = main_cga()

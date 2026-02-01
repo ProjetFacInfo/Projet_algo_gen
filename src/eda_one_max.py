@@ -4,7 +4,7 @@ from deap import base, creator, tools
 import random
 
 # =============================================================================
-# 1. PARAMÈTRES
+# PARAMÈTRES
 # =============================================================================
 # ONE_MAX_LENGTH = 200                  # Taille du problème (N)
 ONE_MAX_LENGTH = 1000                   # Taille du problème (N)
@@ -13,9 +13,6 @@ MAX_GENERATIONS = 500                   # Durée du run
 NB_SEL = POPULATION_SIZE // 2            # Nombre de meilleurs pour l'apprentissage (50% ici)
 NB_RUNS = 20                            # Nombre de répétitions pour la moyenne
 
-# Clamping (Sécurité)
-# MIN_PROBA = 0.02
-# MAX_PROBA = 0.98
 MIN_PROBA = 1.0 / ONE_MAX_LENGTH
 MAX_PROBA = 1.0 - MIN_PROBA
 
@@ -36,7 +33,7 @@ def eval_numpy(ind):
 toolbox.register("evaluate", eval_numpy)
 
 # =============================================================================
-# 3. FONCTIONS CŒUR (EDA)
+# FONCTIONS CŒUR (EDA)
 # =============================================================================
 def genere_population_vectorisee(distribution, pop_size):
     random_matrix = np.random.rand(pop_size, len(distribution))
@@ -51,7 +48,7 @@ def maj_distribution_vectorisee(population, k):
     return new_distrib
 
 # =============================================================================
-# 4. GESTION DES RUNS (MODIFIÉE POUR CAPTER MAX ET AVG)
+# GESTION DES RUNS
 # =============================================================================
 
 def run_single_eda(run_id):
@@ -65,16 +62,12 @@ def run_single_eda(run_id):
     hist_avg = []
 
     for gen in range(MAX_GENERATIONS):
-        # 1. Sampling & Eval
         population = genere_population_vectorisee(distribution, POPULATION_SIZE)
         fitnesses = list(map(toolbox.evaluate, population))
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
 
-        # 2. Update
         distribution = maj_distribution_vectorisee(population, NB_SEL)
-
-        # 3. Stats (On capture les deux métriques)
         fits = [ind.fitness.values[0] for ind in population]
         hist_max.append(max(fits))
         hist_avg.append(np.mean(fits))
@@ -84,20 +77,17 @@ def run_single_eda(run_id):
 def main_multi_runs():
     print(f"--- Démarrage EDA (Runs={NB_RUNS}, N={ONE_MAX_LENGTH}) ---")
 
-    # Matrices pour stocker TOUS les runs
     mat_max = np.zeros((NB_RUNS, MAX_GENERATIONS))
     mat_avg = np.zeros((NB_RUNS, MAX_GENERATIONS))
 
     for r in range(NB_RUNS):
         print(f"Run {r+1}/{NB_RUNS}...", end="\r")
-        # On récupère les deux courbes du run r
         r_max, r_avg = run_single_eda(r)
         mat_max[r, :] = r_max
         mat_avg[r, :] = r_avg
 
     print(f"\nCalcul des statistiques...")
 
-    # Moyennes et Ecart-types sur l'ensemble des runs
     stats = {
         "mean_max": np.mean(mat_max, axis=0),
         "std_max": np.std(mat_max, axis=0),
@@ -108,7 +98,7 @@ def main_multi_runs():
     return stats
 
 # =============================================================================
-# 5. AFFICHAGE (Double courbe avec ombres)
+# AFFICHAGE (Double courbe avec ombres)
 # =============================================================================
 if __name__ == "__main__":
     s = main_multi_runs()

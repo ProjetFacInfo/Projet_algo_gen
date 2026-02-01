@@ -57,21 +57,21 @@ def selTournament(individuals, k, tournsize):
     """
     n_individuals = len(individuals)
 
-    # 1. Extraction des fitnesses
+    # Extraction des fitnesses
     fits = np.array([ind.fitness.values[0] for ind in individuals])
 
-    # 2. Création de la matrice de tournoi (k combats de 'tournsize' participants)
+    # Création de la matrice de tournoi (k combats de 'tournsize' participants)
     # On génère k * tournsize indices aléatoires
     competitors_indices = np.random.randint(0, n_individuals, (k, tournsize))
 
-    # 3. Récupération des fitnesses correspondantes
+    # Récupération des fitnesses correspondantes
     competitors_fitnesses = fits[competitors_indices]
 
-    # 4. Trouver le gagnant de chaque ligne (argmax sur l'axe 1)
+    # Trouver le gagnant de chaque ligne (argmax sur l'axe 1)
     # winners_local_indices[i] donne l'index (0..tournsize-1) du gagnant du i-ème tournoi
     winners_local_indices = np.argmax(competitors_fitnesses, axis=1)
 
-    # 5. Retrouver l'index global du gagnant
+    # Retrouver l'index global du gagnant
     # On sélectionne l'index global correspondant au gagnant local pour chaque ligne
     winners_global_indices = competitors_indices[np.arange(k), winners_local_indices]
 
@@ -101,12 +101,10 @@ def cxUniform(ind1, ind2, indpb):
     Au lieu de iterer bit par bit, on génère un masque booléen complet.
     """
     size = len(ind1)
-
-    # 1. Génération du masque de swap (True là où on doit échanger)
     # C'est beaucoup plus rapide que d'appeler random() size fois
     swap_mask = np.random.random(size) < indpb
 
-    # 2. Échange vectorisé
+    # Échange vectorisé
     # On utilise un buffer temporaire pour les valeurs de ind1 à ces endroits
     temp = ind1[swap_mask].copy()
     ind1[swap_mask] = ind2[swap_mask]
@@ -120,10 +118,10 @@ def mutFlipBit(individual, indpb):
     Mutation BitFlip (Vectorisée).
     Inverse les bits selon une probabilité, sans aucune boucle Python.
     """
-    # 1. Génération du masque de mutation
+    # Génération du masque de mutation
     mutation_mask = np.random.random(len(individual)) < indpb
 
-    # 2. Application de la mutation par XOR (Bitwise Exclusive OR)
+    # Application de la mutation par XOR (Bitwise Exclusive OR)
     # Si le masque est True (1), le bit change (0->1, 1->0). Si False (0), il reste.
     # L'opérateur ^= est ultra-rapide en C.
     individual[mutation_mask] ^= 1
@@ -135,17 +133,15 @@ def mutKFlip(individual, k):
     Version optimisée avec Numpy.
     Inverse exactement k bits.
     """
-    # 1. Génération rapide des k indices uniques
+    # Génération rapide des k indices uniques
     # replace=False est crucial pour ne pas flipper 2 fois le même bit (ce qui l'annulerait)
     indices = np.random.choice(len(individual), k, replace=False)
 
-    # 2. Application de la mutation
-    # Vérification : Si ton individu est déjà un array numpy (idéal), c'est instantané
+    # Application de la mutation
     if isinstance(individual, np.ndarray):
         individual[indices] ^= 1  # Vectorisation totale : 0->1, 1->0
     else:
         # Si tu utilises des listes standard DEAP, on doit boucler,
-        # mais c'est quand même plus rapide grâce au XOR
         for i in indices:
             individual[i] ^= 1
 
@@ -158,7 +154,6 @@ toolbox = base.Toolbox()
 toolbox.register("attr_bool", random.randint, 0, 1)
 
 def init_numpy_ind(icls, size):
-    # Génère des 0 ou 1 aléatoires directement en vecteur
     return icls(np.random.randint(0, 2, size))
 
 toolbox.register("individual", init_numpy_ind, creator.Individual, ONE_MAX_LENGTH)
