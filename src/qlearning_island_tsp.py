@@ -8,7 +8,7 @@ from deap import base, creator, tools
 
 
 # ==============================================================================
-# 1. CLASSE TSP (Chargement Local Dynamique)
+# CLASSE TSP (Chargement Local Dynamique)
 # ==============================================================================
 class TravelingSalesmanProblem:
     def __init__(self, name):
@@ -57,7 +57,7 @@ N_ZONES = 10  # Discrétisation de la Fitness
 
 
 # ==============================================================================
-# 2. CONFIGURATION DEAP
+# CONFIGURATION DEAP
 # ==============================================================================
 if "FitnessMin" in dir(creator): del creator.FitnessMin
 if "Individual" in dir(creator): del creator.Individual
@@ -67,7 +67,7 @@ creator.create("Individual", list, fitness=creator.FitnessMin,
 
 
 # ==============================================================================
-# 3. AGENT Q-LEARNING MIS À JOUR
+# AGENT Q-LEARNING MIS À JOUR
 # ==============================================================================
 class QLearningAgent:
     def __init__(self, n_islands, n_zones, alpha, gamma, epsilon):
@@ -135,7 +135,7 @@ operators_map = {
 
 
 # ==============================================================================
-# 4. FONCTION D'EXÉCUTION
+# FONCTION D'EXÉCUTION
 # ==============================================================================
 def run_instance(instance_name):
     print(f"\nExécution : {instance_name}...")
@@ -204,7 +204,7 @@ def run_instance(instance_name):
 
 
 # ==============================================================================
-# 5. LANCEMENT
+# LANCEMENT
 # ==============================================================================
 base_dir = os.path.dirname(os.path.abspath(__file__))
 data_path = os.path.join(base_dir, "..", "tsp-data", "*-loc.pickle")
